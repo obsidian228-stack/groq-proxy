@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/json',
         // Зашиваем твой ключ прямо сюда, чтобы FlutterFlow не мог его стереть:
-        'Authorization': 'Bearer gsk_g7hVgFzz6xVJwqiBawUWGdyb3FYwJUzm6otkWq7ub9wc5XJsl2L'
+        'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
     });
