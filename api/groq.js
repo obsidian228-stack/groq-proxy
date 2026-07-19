@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       ? req.body 
       : {
           model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: "Напиши один короткий факт." }]
+          messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 20 слов! Пиши сразу сам факт, без приветствий и вводных слов." }]
         };
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
