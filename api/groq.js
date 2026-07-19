@@ -13,7 +13,7 @@ export default async function handler(req, res) {
           messages: [{ role: "user", content: "Напиши один короткий факт." }]
         };
 
-    const response = await fetch('https://groq.com', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
