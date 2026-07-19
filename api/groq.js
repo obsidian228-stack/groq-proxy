@@ -6,7 +6,6 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Если FlutterFlow почему-то прислал пустой Body, собираем дефолтный JSON
     const requestBody = (req.body && Object.keys(req.body).length > 0) 
       ? req.body 
       : {
@@ -18,16 +17,16 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': req.headers.authorization || ''
+        // Зашиваем твой ключ прямо сюда, чтобы FlutterFlow не мог его стереть:
+        'Authorization': 'Bearer gsk_g7hVgFzz6xVJwqiBawUWGdyb3FYwJUzm6otkWq7ub9wc5XJsl2L'
       },
       body: JSON.stringify(requestBody)
     });
 
     const text = await response.text();
     
-    // Проверяем, что Groq вообще хоть что-то вернул
     if (!text) {
-      return res.status(400).json({ error: "Groq вернул пустой ответ. Проверь свой API-ключ!" });
+      return res.status(400).json({ error: "Groq вернул пустой ответ. Возможно, лимиты ключа закончились." });
     }
 
     const data = JSON.parse(text);
