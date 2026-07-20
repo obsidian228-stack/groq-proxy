@@ -10,7 +10,6 @@ export default async function handler(req, res) {
       ? req.body 
       : {
           model: "llama-3.1-8b-instant",
-          temperature: 0.3, // ТЕМПЕРАТУРА ТЕПЕРЬ ТУТ (для дефолтных запросов)
           messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 30 слов! Пиши сразу сам факт, без начального формата цифры: и без приветствий и вводных слов." }]
         };
 
@@ -18,7 +17,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Не забудь вставить свой gsk_... ключ вместо заглушки:
+        // Зашиваем твой ключ прямо сюда (не забудь вписать его вместо заглушки):
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
@@ -32,8 +31,8 @@ export default async function handler(req, res) {
 
     const data = JSON.parse(text);
 
-    // Безопасная очистка мусорных цифр только в самом начале строки
-    if (data?.choices?.[0]?.message?.content) {
+    // БЕЗОПАСНАЯ ОЧИСТКА: Убираем только мусорные цифры и двоеточия строго в самом начале строки
+    if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
       data.choices[0].message.content = data.choices[0].message.content.replace(/^[\s\d:]+/, '').trim();
     }
 
