@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const requestBody = (req.body && Object.keys(req.body).length > 0) 
       ? req.body 
       : {
-          model: "llama-3.1-8b-instant",
+          model: "llama3-8b-8192",
           temperature: 0.3, // Модель будет писать строго правдивые факты, без выдумок
           messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких предложений, не длиннее 30 слов! Пиши сразу сам факт без приветствий и вводных слов." }]
         };
