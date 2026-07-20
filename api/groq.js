@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Замени на свой gsk_... токен:
+        // Замени на свой gsk_... рабочий токен:
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     const data = JSON.parse(text);
 
-    // ПРОСТАЯ И БЕЗОПАСНАЯ ОЧИСТКА ЦИФР В НАЧАЛЕ СТРОКИ
+    // НАДЕЖНАЯ ОЧИСТКА: работает строго с полем контента без дублирования условий
     if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
       data.choices[0].message.content = data.choices[0].message.content.replace(/^[\s\d:]+/, '').trim();
     }
