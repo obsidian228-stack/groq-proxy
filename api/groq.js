@@ -17,25 +17,25 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Твой оригинальный рабочий токен gsk_...
+        // Замени на свой gsk_... токен:
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
     });
 
-    let text = await response.text();
+    const text = await response.text();
     
     if (!text) {
       return res.status(400).json({ error: "Groq вернул пустой ответ. Возможно, лимиты ключа закончились." });
     }
 
-    // ТУТ МЫ ЧИСТИМ СЫРОЙ ТЕКСТ: Находим блок "content": " ... " и вырезаем из начала текста цифры и двоеточия.
-    // Это работает прямо внутри текстового ответа, не затрагивая структуру JSON.
-    text = text.replace(/"content"\s*:\s*"[\s\d:]+/, (match) => {
-      return match.replace(/[\s\d:]+$/, ''); 
-    });
-
     const data = JSON.parse(text);
+
+    // ПРОСТАЯ И БЕЗОПАСНАЯ ОЧИСТКА ЦИФР В НАЧАЛЕ СТРОКИ
+    if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+      data.choices[0].message.content = data.choices[0].message.content.replace(/^[\s\d:]+/, '').trim();
+    }
+
     return res.status(response.status).json(data);
   } catch (error) {
     return res.status(500).json({ error: error.message });
