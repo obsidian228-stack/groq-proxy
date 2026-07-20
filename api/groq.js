@@ -10,6 +10,7 @@ export default async function handler(req, res) {
       ? req.body 
       : {
           model: "llama-3.1-8b-instant",
+          temperature: 0.3, // 1. ТВОЯ ТЕМПЕРАТУРА ТУТ (на случай пустого тела)
           messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 30 слов! Пиши сразу сам факт без приветствий и вводных слов." }]
         };
 
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Твой ключ авторизации передается здесь:
+        // Твой ключ здесь:
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
@@ -35,8 +36,11 @@ export default async function handler(req, res) {
     if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
       let originalContent = data.choices[0].message.content;
       
-      // Находим длинные цифры, пробелы или двоеточия в самом начале строки и полностью удаляем их
-      let cleanContent = originalContent.replace(/^\s*[\d\s:]+\s*/, '');
+      // 2. ОБНОВЛЕННАЯ РЕГУЛЯРКА: удаляет слова "факт", двоеточия, пробелы и длинные цифры в самом начале
+      let cleanContent = originalContent
+        .replace(/^(факт|интересный факт|случайный факт)[:\s\d]*/i, '') // убирает слово "Факт:"
+        .replace(/^[\s\d:]+/, '') // убирает цифры, если они идут сразу
+        .trim();
       
       // Записываем очищенный текст обратно в структуру JSON
       data.choices[0].message.content = cleanContent;
