@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Замени на свой gsk_... рабочий токен:
+        // Зашиваем твой ключ прямо сюда (замени заглушку на свой gsk_...):
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
@@ -30,12 +30,6 @@ export default async function handler(req, res) {
     }
 
     const data = JSON.parse(text);
-
-    // НАДЕЖНАЯ ОЧИСТКА: работает строго с полем контента без дублирования условий
-    if (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-      data.choices[0].message.content = data.choices[0].message.content.replace(/^[\s\d:]+/, '').trim();
-    }
-
     return res.status(response.status).json(data);
   } catch (error) {
     return res.status(500).json({ error: error.message });
