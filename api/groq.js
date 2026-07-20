@@ -10,14 +10,14 @@ export default async function handler(req, res) {
       ? req.body 
       : {
           model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 30 слов! Пиши сразу сам факт, без начального формата цифры: и без приветствий и вводных слов." }]
+          messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 30 слов! Пиши сразу сам факт без приветствий и вводных слов." }]
         };
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Зашиваем твой ключ прямо сюда, чтобы FlutterFlow не мог его стереть:
+        // Твой ключ авторизации передается здесь:
         'Authorization': 'Bearer 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'
       },
       body: JSON.stringify(requestBody)
@@ -29,7 +29,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Groq вернул пустой ответ. Возможно, лимиты ключа закончились." });
     }
 
-    const data = JSON.parse(text);
+    let data = JSON.parse(text);
+
+    // БЛОК ОЧИСТКИ ТЕКСТА ОТ ЦИФР В НАЧАЛЕ СТРОКИ
+    if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+      let originalContent = data.choices[0].message.content;
+      
+      // Находим длинные цифры, пробелы или двоеточия в самом начале строки и полностью удаляем их
+      let cleanContent = originalContent.replace(/^\s*[\d\s:]+\s*/, '');
+      
+      // Записываем очищенный текст обратно в структуру JSON
+      data.choices[0].message.content = cleanContent;
+    }
+
     return res.status(response.status).json(data);
   } catch (error) {
     return res.status(500).json({ error: error.message });
