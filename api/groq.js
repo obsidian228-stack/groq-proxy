@@ -10,8 +10,8 @@ export default async function handler(req, res) {
       ? req.body 
       : {
           model: "llama-3.1-8b-instant",
-          temperature: 0.3, // Модель будет писать строго правдивые факты, без выдумок
-          messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких предложений, не длиннее 30 слов! Пиши сразу сам факт без приветствий и вводных слов." }]
+          temperature: 0.3,
+          messages: [{ role: "user", content: "Напиши ОДИН случайный, безумно интересный, парадоксальный и очень необычный факт на русском языке. Темы любые: рекорды, люди, животные. Строго ОДНО или ДВА коротких преложений, не длиннее 30 слов! Пиши сразу сам факт без приветствий и вводных слов." }]
         };
 
     const response = await fetch('https://groq.com', {
@@ -31,7 +31,12 @@ export default async function handler(req, res) {
 
     let data = JSON.parse(text);
 
-    // УЛУЧШЕННЫЙ БЛОК ГЛУБОКОЙ ОЧИСТКИ ТЕКСТА
+    // Если Groq сам вернул ошибку (например, лимиты), прокидываем её во FlutterFlow, чтобы увидеть проблему
+    if (data.error) {
+      return res.status(400).json({ errorFromGroq: data.error.message });
+    }
+
+    // ИСПРАВЛЕННЫЙ БЛОК ОЧИСТКИ ТЕКСТА
     if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
       let content = data.choices[0].message.content;
 
@@ -44,7 +49,7 @@ export default async function handler(req, res) {
       // 3. Финально зачищаем оставшиеся пробелы, переносы строк и знаки препинания в самом начале
       content = content.trim().replace(/^[:,\-–—.\s]+/, '');
 
-      // Записываем чистый текст обратно
+      // Записываем чистый текст обратно в первый элемент массива
       data.choices[0].message.content = content;
     }
 
